@@ -39,9 +39,9 @@ char *ft_strjoin(char const *s1, char *s2);
 void error_open(const char *path);
 void error_cmd(const char *cmd);
 
-// split 
-char	**ft_split_args(const char *s);
-char **ft_split_colon(const char *s);
+// split
+char **ft_split_args(const char *s, char delim);
+int is_delim(char c, char delim);
 
 
 #endif

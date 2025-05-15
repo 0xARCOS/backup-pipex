@@ -1,114 +1,125 @@
 #include <stdlib.h>
-#include <unistd.h>
 #include "pipex.h"
 
-static int is_space(char c)
+int	is_delim(char c, char delim)
 {
-    return (c == ' ' || c == '\t' || c == '\n');
+	return (c == delim);
 }
 
-static int count_args(const char *s)
+static int	is_quote(char c)
 {
-    int count = 0;
-    int in_quotes = 0;
-    char quote_char = 0;
-
-    while (*s)
-    {
-        while(is_space(*s))
-            s++;
-        if (!*s)
-            break;
-        count++;
-        while (*s && (!is_space(*s) || in_quotes))
-        {
-            if ((*s == '\'' || *s == '"'))
-            {
-                if (!in_quotes)
-                {
-                    in_quotes = 1;
-                    quote_char = *s;
-                }
-                else if (quote_char == *s)
-                    in_quotes = 0;
-            }
-            s++;
-        }
-    }
-    return (count);
+	return (c == '\'' || c == '"');
 }
 
-static char	*extract_arg(const char **s)
+static void	toggle_quote(int *in_q, char *quote, char c)
+{
+	if (!(*in_q))
+	{
+		*in_q = 1;
+		*quote = c;
+	}
+	else if (*quote == c)
+		*in_q = 0;
+}
+
+static int	count_args(const char *s, char delim)
+{
+	int	count;
+	int	in_q;
+	char	quote;
+
+	count = 0;
+	in_q = 0;
+	while (*s)
+	{
+		while (*s && is_delim(*s, delim))
+			s++;
+		if (*s)
+			count++;
+		while (*s && (!is_delim(*s, delim) || in_q))
+		{
+			if (is_quote(*s))
+				toggle_quote(&in_q, &quote, *s);
+			s++;
+		}
+	}
+	return (count);
+}
+
+static int	get_arg_len(const char *s, char delim)
+{
+	int	len;
+	int	in_q;
+	char	quote;
+
+	len = 0;
+	in_q = 0;
+	while (*s && (!is_delim(*s, delim) || in_q))
+	{
+		if (is_quote(*s))
+		{
+			toggle_quote(&in_q, &quote, *s);
+			s++;
+		}
+		else
+		{
+			len++;
+			s++;
+		}
+	}
+	return (len);
+}
+
+static char	*extract_arg(const char **s, char delim)
 {
 	char	*arg;
-	int		len = 0;
-	int		in_quotes = 0;
-	char	quote_char = 0;
-	const char *start = *s;
+	int	len;
+	int	in_q;
+	int	i;
+	char	quote;
 
-	while (*start && is_space(*start))
-		start++;
-
-	const char *p = start;
-	while (*p && (!is_space(*p) || in_quotes))
-	{
-		if ((*p == '\'' || *p == '"'))
-		{
-			if (!in_quotes)
-			{
-				in_quotes = 1;
-				quote_char = *p;
-			}
-			else if (quote_char == *p)
-				in_quotes = 0;
-		}
-		p++;
-		len++;
-	}
-
+	while (**s && is_delim(**s, delim))
+		(*s)++;
+	len = get_arg_len(*s, delim);
 	arg = malloc(len + 1);
 	if (!arg)
 		return (NULL);
-
-	int i = 0;
-	in_quotes = 0;
-	while (*start && (!is_space(*start) || in_quotes))
+	in_q = 0;
+	i = 0;
+	while (i < len)
 	{
-		if ((*start == '\'' || *start == '"'))
+		if (is_quote(**s))
 		{
-			if (!in_quotes)
-			{
-				in_quotes = 1;
-				quote_char = *start;
-			}
-			else if (quote_char == *start)
-				in_quotes = 0;
-			start++;
-			continue;
+			toggle_quote(&in_q, &quote, **s);
+			(*s)++;
 		}
-		arg[i++] = *start++;
+		else
+		{
+			arg[i] = **s;
+			(*s)++;
+			i++;
+		}
 	}
 	arg[i] = '\0';
-	*s = start;
 	return (arg);
 }
 
-char	**ft_split_args(const char *s)
+char	**ft_split_args(const char *s, char delim)
 {
-	int		count;
 	char	**args;
-	int		i = 0;
+	int		i;
+	int		count;
 
-	count = count_args(s);
+	if (!s)
+		return (NULL);
+	count = count_args(s, delim);
 	args = malloc(sizeof(char *) * (count + 1));
 	if (!args)
 		return (NULL);
-
+	i = 0;
 	while (*s && i < count)
 	{
-		while (is_space(*s))
-			s++;
-		args[i] = extract_arg(&s);
+		args[i] = extract_arg(&s, delim);
 		if (!args[i])
 		{
 			ft_free_split(args);

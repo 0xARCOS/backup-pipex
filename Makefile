@@ -1,9 +1,9 @@
 NAME = pipex
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
-SRC = main.c utils.c pipex.c get_command_path.c ft_split_args.c ft_split_colon.c
+SRC = main.c utils.c pipex.c get_command_path.c ft_split_args.c
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME)
