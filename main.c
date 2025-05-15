@@ -17,7 +17,7 @@
 
 static int	open_infile(char *path)
 {
-	int fd;
+	int	fd;
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
@@ -27,7 +27,7 @@ static int	open_infile(char *path)
 
 static int	open_outfile(char *path)
 {
-	int fd;
+	int	fd;
 
 	fd = open(path, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)

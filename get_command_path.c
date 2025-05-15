@@ -28,12 +28,12 @@
 //     // Localiza la ristra
 //     while (envp[i] && ft_strncmp(envp[i], "PATH=", 5) != 0)
 //             i++;
-    
+
 //     if (!envp[i])
 //         return (NULL);
-    
+
 //     path_env = envp[i] + 5;
-    
+
 //     paths = ft_split_args(path_env, ':');
 //     if (!paths)
 //         return (NULL);
@@ -57,10 +57,10 @@
 //     return (NULL);
 // }
 
-static char *search_in_paths(char **paths, char *cmd)
+static char	*search_in_paths(char **paths, char *cmd)
 {
-	char *cmd_path;
-	char *full_path;
+	char	*cmd_path;
+	char	*full_path;
 
 	while (*paths)
 	{
@@ -75,11 +75,11 @@ static char *search_in_paths(char **paths, char *cmd)
 	return (NULL);
 }
 
-char *get_command_path(char *cmd, char **envp)
+char	*get_command_path(char *cmd, char **envp)
 {
-	char **paths;
-	char *path_env;
-	char *full_path;
+	char	**paths;
+	char	*path_env;
+	char	*full_path;
 
 	if (access(cmd, X_OK) == 0)
 		return (ft_strdup(cmd));

@@ -14,9 +14,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int ft_strncmp(char const *s1, char const *s2, size_t n)
+int	ft_strncmp(char const *s1, char const *s2, size_t n)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	if (n == 0)
@@ -26,19 +26,21 @@ int ft_strncmp(char const *s1, char const *s2, size_t n)
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
-void ft_putstr(char *s, int fd)
+void	ft_putstr(char *s, int fd)
 {
-	int i;
+	int	i;
+
 	i = 0;
 	if (!s)
-		return;
+		return ;
 	while (s[i])
 		write(fd, &s[i++], 1);
 }
 
-int ft_strlen(char const *s)
+int	ft_strlen(char const *s)
 {
-	int i;
+	int	i;
+
 	i = 0;
 	if (!s)
 		return (0);
@@ -47,22 +49,24 @@ int ft_strlen(char const *s)
 	return (i);
 }
 
-void ft_free_split(char **arr)
+void	ft_free_split(char **arr)
 {
-	int i;
+	int	i;
+
 	i = 0;
 	if (!arr)
-		return;
+		return ;
 	while (arr[i])
 		free(arr[i++]);
 	free(arr);
 }
 
-char *ft_strjoin(char const *s1, char *s2)
+char	*ft_strjoin(char const *s1, char *s2)
 {
-	int i;
-	int j;
-	char *copy;
+	int		i;
+	int		j;
+	char	*copy;
+
 	i = 0;
 	j = 0;
 	copy = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
@@ -82,10 +86,11 @@ char *ft_strjoin(char const *s1, char *s2)
 	return (copy);
 }
 
-char *ft_strdup(const char *s1)
+char	*ft_strdup(const char *s1)
 {
-	char *copy;
-	int i;
+	char	*copy;
+	int		i;
+
 	i = 0;
 	copy = malloc(ft_strlen(s1) + 1);
 	if (!copy)
@@ -99,13 +104,13 @@ char *ft_strdup(const char *s1)
 	return (copy);
 }
 
-void error_open(const char *path)
+void	error_open(const char *path)
 {
 	perror(path);
 	exit(1);
 }
 
-void error_cmd(const char *cmd)
+void	error_cmd(const char *cmd)
 {
 	ft_putstr_fd("pipex: ", 2);
 	ft_putstr_fd(cmd, 2);
@@ -113,17 +118,18 @@ void error_cmd(const char *cmd)
 	exit(127);
 }
 
-void ft_putstr_fd(const char *s, int fd)
+void	ft_putstr_fd(const char *s, int fd)
 {
 	if (!s)
-		return;
+		return ;
 	write(fd, s, ft_strlen(s));
 }
 
-char *ft_strndup(const char *s, int len)
+char	*ft_strndup(const char *s, int len)
 {
-	char *copy;
-	int i;
+	char	*copy;
+	int		i;
+
 	i = 0;
 	copy = malloc(len + 1);
 	if (!copy)

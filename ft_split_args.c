@@ -1,14 +1,34 @@
-#include <stdlib.h>
-#include "pipex.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split_args.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ari <ari@student.42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 04:04:13 by ari               #+#    #+#             */
+/*   Updated: 2025/05/15 04:35:32 by ari              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int	is_delim(char c, char delim)
-{
-	return (c == delim);
-}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split_args.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: YOURLOGIN <your.email@student.42.fr>        +#+  +:+      
+	+#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 00:00:00 by YOURLOGIN         #+#    #+#             */
+/*   Updated: 2025/05/15 00:00:00 by YOURLOGIN        ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "pipex.h"
+#include <stdlib.h>
 
 static int	is_quote(char c)
 {
-	return (c == '\'' || c == '"');
+	return (c == '"' || c == '\'');
 }
 
 static void	toggle_quote(int *in_q, char *quote, char c)
@@ -24,23 +44,25 @@ static void	toggle_quote(int *in_q, char *quote, char c)
 
 static int	count_args(const char *s, char delim)
 {
-	int	count;
-	int	in_q;
+	int		count;
+	int		in_q;
 	char	quote;
 
 	count = 0;
 	in_q = 0;
 	while (*s)
 	{
-		while (*s && is_delim(*s, delim))
+		while (*s && *s == delim)
 			s++;
 		if (*s)
-			count++;
-		while (*s && (!is_delim(*s, delim) || in_q))
 		{
-			if (is_quote(*s))
-				toggle_quote(&in_q, &quote, *s);
-			s++;
+			count++;
+			while (*s && (*s != delim || in_q))
+			{
+				if (is_quote(*s))
+					toggle_quote(&in_q, &quote, *s);
+				s++;
+			}
 		}
 	}
 	return (count);
@@ -48,24 +70,17 @@ static int	count_args(const char *s, char delim)
 
 static int	get_arg_len(const char *s, char delim)
 {
-	int	len;
-	int	in_q;
+	int		len;
+	int		in_q;
 	char	quote;
 
 	len = 0;
 	in_q = 0;
-	while (*s && (!is_delim(*s, delim) || in_q))
+	while (s[len] && (s[len] != delim || in_q))
 	{
-		if (is_quote(*s))
-		{
-			toggle_quote(&in_q, &quote, *s);
-			s++;
-		}
-		else
-		{
-			len++;
-			s++;
-		}
+		if (is_quote(s[len]))
+			toggle_quote(&in_q, &quote, s[len]);
+		len++;
 	}
 	return (len);
 }
@@ -73,12 +88,12 @@ static int	get_arg_len(const char *s, char delim)
 static char	*extract_arg(const char **s, char delim)
 {
 	char	*arg;
-	int	len;
-	int	in_q;
-	int	i;
+	int		len;
+	int		i;
+	int		in_q;
 	char	quote;
 
-	while (**s && is_delim(**s, delim))
+	while (**s && **s == delim)
 		(*s)++;
 	len = get_arg_len(*s, delim);
 	arg = malloc(len + 1);
@@ -94,11 +109,7 @@ static char	*extract_arg(const char **s, char delim)
 			(*s)++;
 		}
 		else
-		{
-			arg[i] = **s;
-			(*s)++;
-			i++;
-		}
+			arg[i++] = *(*s)++;
 	}
 	arg[i] = '\0';
 	return (arg);
@@ -122,7 +133,9 @@ char	**ft_split_args(const char *s, char delim)
 		args[i] = extract_arg(&s, delim);
 		if (!args[i])
 		{
-			ft_free_split(args);
+			while (i > 0)
+				free(args[--i]);
+			free(args);
 			return (NULL);
 		}
 		i++;

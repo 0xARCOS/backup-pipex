@@ -1,12 +1,12 @@
 
 #include "pipex.h"
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 static void	print_args_debug(char **args)
 {
-	int i;
-	char idx;
+	int		i;
+	char	idx;
 
 	i = 0;
 	while (args[i])
